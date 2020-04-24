@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/moderatemisbehaviour/my-data/issues"
   },
-  "homepage": "https://github.com/moderatemisbehaviour/my-data#readme"
+  "homepage": "https://github.com/moderatemisbehaviour/my-data#readme",
+  "devDependencies": {
+    "cypress": "^4.4.1"
+  }
 }
