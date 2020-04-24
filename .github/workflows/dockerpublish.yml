@@ -25,14 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run tests
-        run: |
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run graphql-engine
-          else
-            docker build . --file Dockerfile
-          fi
+      - name: Start app
+        run: docker-compose up -d
+      - uses: cypress-io/github-action@v1
+          with:
+            browser: chrome
+            headless: true
+      - name: Stop app
+        run: docker-compose stop
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
