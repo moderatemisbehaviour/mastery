@@ -28,9 +28,9 @@ jobs:
       - name: Start app
         run: docker-compose up -d
       - uses: cypress-io/github-action@v1
-          with:
-            browser: chrome
-            headless: true
+        with:
+          browser: chrome
+          headless: true
       - name: Stop app
         run: docker-compose stop
 
