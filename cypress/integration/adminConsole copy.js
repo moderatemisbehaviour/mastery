@@ -1,0 +1,12 @@
+describe('The admin console', () => {
+  beforeEach(() => {
+    cy.visit('/')
+  })
+
+  it('has a navbar with links to the main features', () => {
+    cy.contains('GraphQL')
+    cy.contains('Data')
+    cy.contains('Remote Schemas')
+    cy.contains('Events')
+  })
+})
