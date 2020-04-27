@@ -9,6 +9,6 @@ describe('The admin console', () => {
     cy.contains('Remote Schemas')
     cy.contains('Events')
 
-    cy.wait(10000)
+    cy.wait(30000)
   })
 })
