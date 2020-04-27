@@ -21,18 +21,27 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
     runs-on: ubuntu-latest
+    services:
+      cypress-director:
+        image: agoldis/sorry-cypress-director
+        ports:
+          - 1234:1234
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Start app
-        run: docker-compose up -d
       - uses: cypress-io/github-action@v1
         with:
+          build: ./update-cypress-dashboard-api.sh
           browser: chrome
           headless: true
-      - name: Stop app
-        run: docker-compose stop
+          record: true
+          parallel: true
+          start: docker-compose up -d
+          stop: docker-compose stop
+        env:
+          # Fake record key passed to directory service
+          CYPRESS_RECORD_KEY: xxxx
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
