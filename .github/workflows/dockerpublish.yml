@@ -33,7 +33,6 @@ jobs:
       - uses: cypress-io/github-action@v1
         with:
           build: ${{ github.workspace }}/update-cypress-dashboard-api.sh
-          browser: chrome
           headless: true
           record: true
           parallel: true
