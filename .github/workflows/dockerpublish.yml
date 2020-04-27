@@ -33,11 +33,6 @@ jobs:
 
   test-parallel:
     runs-on: ubuntu-latest
-    services:
-      cypress-director:
-        image: agoldis/sorry-cypress-director
-        ports:
-          - 1234:1234
     strategy:
       # when one test fails, DO NOT cancel the other
       # containers, because this will kill Cypress processes
