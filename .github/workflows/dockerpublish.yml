@@ -42,28 +42,28 @@ jobs:
           # Fake record key passed to directory service
           CYPRESS_RECORD_KEY: xxxx
 
-    test-parallel:
-      runs-on: ubuntu-latest
-      services:
-        cypress-director:
-          image: agoldis/sorry-cypress-director
-          ports:
-            - 1234:1234
-  
-      steps:
-        - uses: actions/checkout@v2
-  
-        - uses: cypress-io/github-action@v1
-          with:
-            build: ${{ github.workspace }}/update-cypress-dashboard-api.sh
-            headless: true
-            record: true
-            parallel: true
-            start: docker-compose up -d
-            stop: docker-compose stop
-          env:
-            # Fake record key passed to directory service
-            CYPRESS_RECORD_KEY: xxxx
+  test-parallel:
+    runs-on: ubuntu-latest
+    services:
+      cypress-director:
+        image: agoldis/sorry-cypress-director
+        ports:
+          - 1234:1234
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: cypress-io/github-action@v1
+        with:
+          build: ${{ github.workspace }}/update-cypress-dashboard-api.sh
+          headless: true
+          record: true
+          parallel: true
+          start: docker-compose up -d
+          stop: docker-compose stop
+        env:
+          # Fake record key passed to directory service
+          CYPRESS_RECORD_KEY: xxxx
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
