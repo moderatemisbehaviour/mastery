@@ -19,19 +19,7 @@ env:
 jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test-serial:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: cypress-io/github-action@v1
-        with:
-          headless: true
-          start: docker-compose up -d
-          stop: docker-compose stop
-
-  test-parallel:
+  test:
     runs-on: ubuntu-latest
     strategy:
       # when one test fails, DO NOT cancel the other
@@ -62,7 +50,7 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/
   push:
     # Ensure test job passes before pushing image.
-    needs: [test-serial, test-parallel]
+    needs: test
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
