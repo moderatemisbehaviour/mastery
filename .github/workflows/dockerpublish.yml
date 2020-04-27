@@ -32,7 +32,7 @@ jobs:
 
       - uses: cypress-io/github-action@v1
         with:
-          build: $GITHUB_WORKSPACE/update-cypress-dashboard-api.sh
+          build: ${{ github.workspace }}/update-cypress-dashboard-api.sh
           browser: chrome
           headless: true
           record: true
