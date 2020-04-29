@@ -21,6 +21,7 @@ jobs:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Build React app
@@ -42,7 +43,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
       - uses: cypress-io/github-action@v1
         with:
           build: ${{ github.workspace }}/ci/update-cypress-dashboard-api.sh
