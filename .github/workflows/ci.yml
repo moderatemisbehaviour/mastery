@@ -21,8 +21,8 @@ jobs:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     steps:
-      # - name: Build Builder
-      #   run: docker build -f ./ci/builder/Dockerfile --tag builder ./ci/builder
+      - name: Build Builder
+        run: docker build -f ./ci/builder/Dockerfile --tag builder ./ci/builder
       - name: Build React app
         run: docker run -v $(pwd)/client:/client builder npm run build --prefix /client
 
