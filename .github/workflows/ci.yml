@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build Builder
-        run: docker build -f ./ci/builder/Dockerfile --tag builder ./ci/builder
+        run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Build React app
         run: docker run -v $(pwd)/client:/client builder npm run build --prefix /client
 
