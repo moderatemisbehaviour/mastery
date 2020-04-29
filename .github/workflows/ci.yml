@@ -20,7 +20,6 @@ jobs:
   build:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
-    # Docker Hub image that `container-job` executes in
       steps:
         # - name: Build Builder
         #   run: docker build -f ./ci/builder/Dockerfile --tag builder ./ci/builder
