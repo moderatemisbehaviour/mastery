@@ -17,6 +17,16 @@ env:
   IMAGE_NAME: Mastery
 
 jobs:
+  build:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+      steps:
+        # - name: Build Builder
+        #   run: docker build -f ./ci/builder/Dockerfile --tag builder ./ci/builder
+        - name: Build React app
+          run: docker run -v $(pwd)/client:/client builder npm run build --prefix /client
+
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
@@ -36,7 +46,7 @@ jobs:
 
       - uses: cypress-io/github-action@v1
         with:
-          build: ${{ github.workspace }}/update-cypress-dashboard-api.sh
+          build: ${{ github.workspace }}/ci/update-cypress-dashboard-api.sh
           headless: true
           record: true
           parallel: true
@@ -46,6 +56,7 @@ jobs:
           # Fake record key passed to directory service
           CYPRESS_RECORD_KEY: xxxx
 
+  # TODO: Change this to push a regular Node package instead which can be deployed to GAE
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
   push:
