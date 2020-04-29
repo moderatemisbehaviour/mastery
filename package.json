@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "(cd client && npm start) && docker compose up",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "docker-compose up",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "hello": "echo \"hello\""
   },
   "repository": {
     "type": "git",
