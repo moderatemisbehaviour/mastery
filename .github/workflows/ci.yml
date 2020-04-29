@@ -17,15 +17,19 @@ env:
   IMAGE_NAME: Mastery
 
 jobs:
-  build:
+  install:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
-      # - name: Build React app
-      #   run: docker run -v $(pwd)/client:/client builder npm run build --prefix /client
+      - name: Install API dependencies
+        run: docker run -v ${{ github.workspace }}:/mastery builder npm install --prefix mastery
+      - name: Install app dependencies
+        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --prefix mastery/client
+      - name: Build React app
+        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm run build --prefix mastery/client
 
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
