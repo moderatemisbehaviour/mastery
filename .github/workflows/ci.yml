@@ -24,8 +24,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
-      - name: Build React app
-        run: docker run -v $(pwd)/client:/client builder npm run build --prefix /client
+      # - name: Build React app
+      #   run: docker run -v $(pwd)/client:/client builder npm run build --prefix /client
 
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
