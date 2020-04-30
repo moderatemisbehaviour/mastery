@@ -27,7 +27,7 @@ jobs:
       - name: Install API dependencies
         run: docker run -v ${{ github.workspace }}:/mastery builder npm install --prefix mastery
       - name: Install app dependencies
-        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --prefix mastery/client
+        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --unsafe-perm --prefix mastery/client
       - name: Build React app
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm run build --prefix mastery/client
 
@@ -55,6 +55,7 @@ jobs:
           record: true
           parallel: true
           start: docker-compose up -d
+          wait-on: 'http://localhost:3001'
           stop: docker-compose stop
         env:
           # Fake record key passed to directory service
