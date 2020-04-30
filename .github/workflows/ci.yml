@@ -25,9 +25,9 @@ jobs:
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Install API dependencies
-        run: docker run -v ${{ github.workspace }}:/mastery builder npm install --prefix mastery
+        run: docker run -v ${{ github.workspace }}:/mastery builder npm install --unsafe-perm --prefix mastery
       - name: Install app dependencies
-        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --unsafe-perm --prefix mastery/client
+        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --prefix mastery/client
       - name: Build React app
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm run build --prefix mastery/client
 
