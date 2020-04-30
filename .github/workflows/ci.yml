@@ -21,7 +21,19 @@ jobs:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     steps:
+      # Would be simpler to not use a builder and use actions to install and cache
       - uses: actions/checkout@v2
+      - name: Cache API
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: node-modules-api-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Cache React app
+          uses: actions/cache@v1
+          with:
+            path: ${{ github.workspace }}/client/build/
+            key: react-app-${{ runner.os }}
+
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Install API dependencies
@@ -30,11 +42,6 @@ jobs:
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --prefix mastery/client
       - name: Build React app
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm run build --prefix mastery/client
-      - name: Cache React app
-        uses: actions/cache@v1
-        with:
-          path: ${{ github.workspace }}/client/build/
-          key: ${{ runner.os }}-react-app
 
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
@@ -55,12 +62,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Restore React app
+      - name: Restore API
         uses: actions/cache@v1
         with:
-          path: ${{ github.workspace }}/client/build/
-          key: ${{ runner.os }}-react-app
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: node-modules-api-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Restore React app
+          uses: actions/cache@v1
+          with:
+            path: ${{ github.workspace }}/client/build/
+            key: react-app-${{ runner.os }}
 
       - uses: cypress-io/github-action@v1
         with:
