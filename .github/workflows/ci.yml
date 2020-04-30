@@ -30,10 +30,17 @@ jobs:
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --prefix mastery/client
       - name: Build React app
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm run build --prefix mastery/client
+      - name: Cache React app
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/client/build/
+          key: ${{ runner.os }}-react-app
 
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
+    needs: install
+
     # Wanted to use a service container for sorry-cypress here but it creates one instance per job rather than one for the whole matrix.
     runs-on: ubuntu-latest
     strategy:
@@ -48,6 +55,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Restore React app
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/client/build/
+          key: ${{ runner.os }}-react-app
+
       - uses: cypress-io/github-action@v1
         with:
           build: ${{ github.workspace }}/ci/update-cypress-dashboard-api.sh
