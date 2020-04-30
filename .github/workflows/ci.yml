@@ -34,6 +34,7 @@ jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
+    # Wanted to use a service container for sorry-cypress here but it creates one instance per job rather than one for the whole matrix.
     runs-on: ubuntu-latest
     strategy:
       # when one test fails, DO NOT cancel the other

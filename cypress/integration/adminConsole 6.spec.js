@@ -1,3 +1,7 @@
+before(() => {
+  Cypress.config('baseUrl', 'http://localhost:8080')
+})
+
 describe('The admin console', () => {
   beforeEach(() => {
     cy.visit('/')
