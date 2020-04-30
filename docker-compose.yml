@@ -22,7 +22,7 @@ services:
   web-server:
     image: nginx
     ports:
-      - "80:80"
+      - "3001:80"
     volumes:
       - ./client/build:/usr/share/nginx/html:ro
 volumes:
