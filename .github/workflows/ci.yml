@@ -68,10 +68,10 @@ jobs:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
           key: node-modules-api-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
       - name: Restore React app
-          uses: actions/cache@v1
-          with:
-            path: ${{ github.workspace }}/client/build/
-            key: react-app-${{ runner.os }}
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/client/build/
+          key: react-app-${{ runner.os }}
 
       - uses: cypress-io/github-action@v1
         with:
