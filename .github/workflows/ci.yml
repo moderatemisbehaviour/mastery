@@ -84,37 +84,60 @@ jobs:
   #         CYPRESS_RECORD_KEY: xxxx
 
   # Push package to GitHub Packages.
-  publish:
-    # Ensure test job passes before pushing image.
+  # publish:
+  #   # Ensure test job passes before pushing image.
+  #   needs: install
+
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - uses: actions/checkout@v2
+
+  #     # Setup .npmrc file to publish to GitHub Packages
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: '10.x'
+  #         registry-url: 'https://npm.pkg.github.com'
+  #         scope: '@moderatemisbehaviour' # Defaults to the user or organization that owns the workflow file
+  #     - run: npm install
+  #     - run: |
+  #         # Strip git ref prefix from version
+  #         VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+  #         # Strip "v" prefix from tag name
+  #         [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+  #         # Use SHA if PR
+  #         [[ "${{ github.ref }}" == "refs/pull/"* ]] && VERSION=${{ github.sha }}
+
+  #         # Use Docker `latest` tag convention
+  #         [ "$VERSION" == "master" ] && VERSION=latest
+
+  #         echo VERSION=$VERSION
+
+  #         npm publish --tag $VERSION
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
     needs: install
-
     runs-on: ubuntu-latest
-
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ $HOME/secrets/app-engine-deployer-key.json }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      # Setup .npmrc file to publish to GitHub Packages
-      - uses: actions/setup-node@v1
+      - name: Decrypt service account key
+        run: ${{ github.workspace }}/ci/decrypt-key.sh ${{ github.workspace }}/ci/app-engine-deployer-key.json.gpg app-engine-deployer-key.json ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PASSPHRASE }}
+
+      # Setup and configure gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          node-version: '10.x'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@moderatemisbehaviour' # Defaults to the user or organization that owns the workflow file
-      - run: npm install
-      - run: |
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          version: '0.1.1'
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
 
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use SHA if PR
-          [[ "${{ github.ref }}" == "refs/pull/"* ]] && VERSION=${{ github.sha }}
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo VERSION=$VERSION
-
-          npm publish --tag $VERSION
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Deploy App to App Engine
+      - name: Deploy
+        run: gcloud app deploy
