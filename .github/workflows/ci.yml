@@ -88,7 +88,7 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/
   publish:
     # Ensure test job passes before pushing image.
-    # needs: test
+    needs: install
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
@@ -99,7 +99,7 @@ jobs:
       # Setup .npmrc file to publish to GitHub Packages
       - uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '10.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@moderatemisbehaviour' # Defaults to the user or organization that owns the workflow file
       - run: npm install
@@ -111,7 +111,7 @@ jobs:
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
           # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
+          # [ "$VERSION" == "master" ] && VERSION=latest
 
           echo VERSION=$VERSION
 
