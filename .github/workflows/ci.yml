@@ -136,11 +136,8 @@ jobs:
       # Setup and configure gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          version: '0.1.1'
           project_id: ${{ secrets.PROJECT_ID }}
-          service_account_key: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ../secrets/app-engine-deployer-key.json # Env vars not working
+          service_account_key: ${{ secrets.APP_ENGINE_DEPLOYER_KEY }}
 
       # Deploy App to App Engine
       - name: Deploy
