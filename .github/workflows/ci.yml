@@ -123,10 +123,14 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ $HOME/secrets/app-engine-deployer-key.json }}
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ $HOME }}/secrets/app-engine-deployer-key.json
     steps:
+      - run: pwd
+      - run: echo $HOME
       - name: Checkout
         uses: actions/checkout@v2
+      - run: pwd
+      - run: echo $HOME
 
       - name: Decrypt service account key
         run: ${{ github.workspace }}/ci/decrypt-key.sh ${{ github.workspace }}/ci/app-engine-deployer-key.json.gpg app-engine-deployer-key.json ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PASSPHRASE }}
