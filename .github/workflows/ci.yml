@@ -131,7 +131,7 @@ jobs:
       - run: echo $HOME
 
       - name: Decrypt service account key
-        run: ${{ github.workspace }}/ci/decrypt-key.sh ${{ github.workspace }}/ci/app-engine-deployer-key.json.gpg app-engine-deployer-key.json ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PASSPHRASE }}
+        run: ${{ github.workspace }}/ci/decrypt-secret.sh ${{ github.workspace }}/ci/app-engine-deployer-key.json.gpg app-engine-deployer-key.json ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PASSPHRASE }}
 
       # Setup and configure gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
