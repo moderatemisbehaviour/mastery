@@ -122,8 +122,6 @@ jobs:
   deploy:
     needs: install
     runs-on: ubuntu-latest
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ env.HOME }}/secrets/app-engine-deployer-key.json
     steps:
       - run: pwd
       - run: echo $HOME
@@ -141,6 +139,8 @@ jobs:
           version: '0.1.1'
           project_id: ${{ secrets.PROJECT_ID }}
           service_account_key: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.HOME }}/secrets/app-engine-deployer-key.json # Env vars that reference other env vars can only be used in steps, not jobs
 
       # Deploy App to App Engine
       - name: Deploy
