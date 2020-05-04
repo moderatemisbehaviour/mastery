@@ -107,6 +107,9 @@ jobs:
           # Strip "v" prefix from tag name
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
+          # Use SHA if PR
+          [[ "${{ github.ref }}" == "refs/pull/"* ]] && VERSION=${{ github.sha }}
+
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
 
