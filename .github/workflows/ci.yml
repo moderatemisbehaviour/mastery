@@ -42,46 +42,46 @@ jobs:
 
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
-    needs: install
+  # test:
+  #   needs: install
 
-    # Wanted to use a service container for sorry-cypress here but it creates one instance per job rather than one for the whole matrix.
-    runs-on: ubuntu-latest
-    strategy:
-      # when one test fails, DO NOT cancel the other
-      # containers, because this will kill Cypress processes
-      # leaving the Dashboard hanging ...
-      # https://github.com/cypress-io/github-action/issues/48
-      fail-fast: false
-      matrix:
-        # run 3 copies of the current job in parallel
-        containers: [1, 2, 3]
+  #   # Wanted to use a service container for sorry-cypress here but it creates one instance per job rather than one for the whole matrix.
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     # when one test fails, DO NOT cancel the other
+  #     # containers, because this will kill Cypress processes
+  #     # leaving the Dashboard hanging ...
+  #     # https://github.com/cypress-io/github-action/issues/48
+  #     fail-fast: false
+  #     matrix:
+  #       # run 3 copies of the current job in parallel
+  #       containers: [1, 2, 3]
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Restore API
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: node-modules-api-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: Restore React app
-        uses: actions/cache@v1
-        with:
-          path: ${{ github.workspace }}/client/build/
-          key: react-app-${{ runner.os }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Restore API
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+  #         key: node-modules-api-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+  #     - name: Restore React app
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: ${{ github.workspace }}/client/build/
+  #         key: react-app-${{ runner.os }}
 
-      - uses: cypress-io/github-action@v1
-        with:
-          build: ${{ github.workspace }}/ci/sorry-cypress/update-cypress-dashboard-api-url.sh
-          headless: true
-          record: true
-          parallel: true
-          start: docker-compose up -d
-          wait-on: 'http://localhost:3001'
-          stop: docker-compose stop
-        env:
-          # Fake record key passed to directory service
-          CYPRESS_RECORD_KEY: xxxx
+  #     - uses: cypress-io/github-action@v1
+  #       with:
+  #         build: ${{ github.workspace }}/ci/sorry-cypress/update-cypress-dashboard-api-url.sh
+  #         headless: true
+  #         record: true
+  #         parallel: true
+  #         start: docker-compose up -d
+  #         wait-on: 'http://localhost:3001'
+  #         stop: docker-compose stop
+  #       env:
+  #         # Fake record key passed to directory service
+  #         CYPRESS_RECORD_KEY: xxxx
 
   # TODO: Change this to push a regular Node package instead which can be deployed to GAE
   # Push image to GitHub Packages.
