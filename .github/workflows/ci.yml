@@ -140,7 +140,7 @@ jobs:
           project_id: ${{ secrets.PROJECT_ID }}
           service_account_key: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.HOME }}/secrets/app-engine-deployer-key.json # Env vars that reference other env vars can only be used in steps, not jobs
+          GOOGLE_APPLICATION_CREDENTIALS: ../secrets/app-engine-deployer-key.json # Env vars not working
 
       # Deploy App to App Engine
       - name: Deploy
