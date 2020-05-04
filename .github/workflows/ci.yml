@@ -123,7 +123,7 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ $HOME }}/secrets/app-engine-deployer-key.json
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ env.HOME }}/secrets/app-engine-deployer-key.json
     steps:
       - run: pwd
       - run: echo $HOME
