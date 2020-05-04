@@ -101,6 +101,7 @@ jobs:
         with:
           node-version: '12.x'
           registry-url: 'https://npm.pkg.github.com'
+          scope: '@moderatemisbehaviour' # Defaults to the user or organization that owns the workflow file
       - run: npm install
       - run: |
           # Strip git ref prefix from version

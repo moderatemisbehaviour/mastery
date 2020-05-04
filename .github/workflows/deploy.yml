@@ -1,0 +1,28 @@
+name: Deploy
+
+on:
+  registry_package:
+
+env:
+  GOOGLE_APPLICATION_CREDENTIALS: ${{ $HOME/secrets/app-engine-deployer-key.json }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Decrypt service account key
+        run: ${{ github.workspace }}/ci/decrypt-key.sh ${{ github.workspace }}/ci/app-engine-deployer-key.json.gpg app-engine-deployer-key.json ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PASSPHRASE }}
+
+      # Setup and configure gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      # Deploy App to App Engine
+      - name: Deploy
+        run: gcloud app deploy
