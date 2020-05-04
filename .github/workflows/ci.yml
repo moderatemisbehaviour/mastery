@@ -83,9 +83,7 @@ jobs:
   #         # Fake record key passed to directory service
   #         CYPRESS_RECORD_KEY: xxxx
 
-  # TODO: Change this to push a regular Node package instead which can be deployed to GAE
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
+  # Push package to GitHub Packages.
   publish:
     # Ensure test job passes before pushing image.
     needs: install
@@ -111,7 +109,7 @@ jobs:
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
           # Use Docker `latest` tag convention
-          # [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "master" ] && VERSION=latest
 
           echo VERSION=$VERSION
 
