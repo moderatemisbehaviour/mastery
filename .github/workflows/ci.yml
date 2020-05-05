@@ -1,16 +1,22 @@
 name: CI
 
+# Note: this workflow is for a GitHub flow branching strategy using only master and feature branches.
 on:
   push:
-    # Publish `master` as Docker `latest` image.
+    # TODO: Check if PR builds use a merged commit or just the head ref of the branch.
+    #
+    # If they use the merged commit then master builds are not necessary.
     branches:
       - master
 
-    # Publish `v1.2.3` tags as releases.
+    # TODO: Consider moving this to a separate workflow that just creates a release.
+    #
+    # Can't see a reason why tagging existing commits should result in a new build.
+    # However we may want to use tags as the trigger for automated releases or other things.
     tags:
       - v*
 
-  # Run tests for any PRs.
+  # Run tests for any PRs and build feature environment.
   pull_request:
 
 jobs:
@@ -18,103 +24,118 @@ jobs:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     steps:
-      # Would be simpler to not use a builder and use actions to install and cache
       - uses: actions/checkout@v2
-      - name: Cache API
+
+      - name: Cache API and client node modules
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: node-modules-api-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: Cache React app
+          key: ${{ runner.os }}-install-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-install-node-modules-
+      - name: Cache client
         uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/client/build/
-          key: react-app-${{ runner.os }}
+          key: ${{ runner.os }}-install-react-app
 
+      # TODO: Would be simpler to not use a builder container and just use actions to install and cache.
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Install API dependencies
         run: docker run -v ${{ github.workspace }}:/mastery builder npm install --unsafe-perm --prefix mastery
       - name: Install app dependencies
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --prefix mastery/client
-      - name: Build React app
+      - name: Build client
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm run build --prefix mastery/client
 
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  # test:
-  #   needs: install
-
-  #   # Wanted to use a service container for sorry-cypress here but it creates one instance per job rather than one for the whole matrix.
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     # when one test fails, DO NOT cancel the other
-  #     # containers, because this will kill Cypress processes
-  #     # leaving the Dashboard hanging ...
-  #     # https://github.com/cypress-io/github-action/issues/48
-  #     fail-fast: false
-  #     matrix:
-  #       # run 3 copies of the current job in parallel
-  #       containers: [1, 2, 3]
-
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Restore API
-  #       uses: actions/cache@v1
-  #       with:
-  #         path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-  #         key: node-modules-api-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-  #     - name: Restore React app
-  #       uses: actions/cache@v1
-  #       with:
-  #         path: ${{ github.workspace }}/client/build/
-  #         key: react-app-${{ runner.os }}
-
-  #     - uses: cypress-io/github-action@v1
-  #       with:
-  #         build: ${{ github.workspace }}/ci/sorry-cypress/update-cypress-dashboard-api-url.sh
-  #         headless: true
-  #         record: true
-  #         parallel: true
-  #         start: docker-compose up -d
-  #         wait-on: 'http://localhost:3001'
-  #         stop: docker-compose stop
-  #       env:
-  #         # Fake record key passed to directory service
-  #         CYPRESS_RECORD_KEY: xxxx
-
-  # TODO: Change this to push a regular Node package instead which can be deployed to GAE
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
-  publish:
-    # Ensure test job passes before pushing image.
+  test:
     needs: install
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    # Wanted to use a service container for sorry-cypress here but it creates one instance per instance of the job
+    # rather than one for the whole matrix.
+    strategy:
+      # when one test fails, DO NOT cancel the other
+      # containers, because this will kill Cypress processes
+      # leaving the Dashboard hanging ...
+      # https://github.com/cypress-io/github-action/issues/48
+      fail-fast: false
+      matrix:
+        # run 3 copies of the current job in parallel
+        containers: [1, 2, 3]
 
     steps:
       - uses: actions/checkout@v2
 
-      # Setup .npmrc file to publish to GitHub Packages
-      - uses: actions/setup-node@v1
+      - name: Restore API
+        uses: actions/cache@v1
         with:
-          node-version: '10.x'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@moderatemisbehaviour' # Defaults to the user or organization that owns the workflow file
-      - run: npm install
-      - run: |
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-install-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-install-node-modules-
+      - name: Restore client
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/client/build/
+          key: ${{ runner.os }}-install-react-app
 
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          # [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo VERSION=$VERSION
-
-          npm publish --tag $VERSION
+        uses: cypress-io/github-action@v1
+        with:
+          build: ${{ github.workspace }}/ci/sorry-cypress/update-cypress-dashboard-api-url.sh
+          headless: true
+          record: true
+          parallel: true
+          start: docker-compose up -d
+          wait-on: 'http://localhost:3001'
+          stop: docker-compose stop
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Fake record key passed to directory service
+          CYPRESS_RECORD_KEY: xxxx
+
+  deploy-api:
+    needs: test # Could change this to 'install' so that it runs in parallel to test but don't want to deploy if tests fail.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup and configure gcloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ secrets.APP_ENGINE_DEPLOYER_KEY }}
+          export_default_credentials: true
+
+      - name: Deploy API to app engine
+        run: gcloud app deploy
+
+  deploy-client:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      # TODO: See if there's a way to avoid using cache here.
+      #
+      # It's awkward having to restore cache in each new job.
+      # We should really install node modules again just in case the cache misses for some reason.
+      # Not currently doing this because it shouldn't happen and makes it much more verbose.
+      #
+      # It's strange that there's not an action to only restore from cache...
+      - uses: actions/checkout@v2
+
+      - name: Restore client
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/client/build/
+          key: ${{ runner.os }}-install-react-app
+
+      - name: Setup and configure gcloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ secrets.APP_ENGINE_DEPLOYER_KEY }}
+          export_default_credentials: true
+
+      - name: Deploy client to bucket
+        run: gsutil -m rsync -r ./client/build gs://${{ secrets.PROJECT_ID }}-client

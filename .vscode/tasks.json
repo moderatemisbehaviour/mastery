@@ -3,17 +3,6 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "hello",
-			"problemMatcher": [],
-			"label": "npm: hello",
-			"detail": "echo \"hello\"",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		},
-		{
-			"type": "npm",
 			"script": "start",
 			"problemMatcher": [],
 			"label": "Start Docker containers",
@@ -24,7 +13,7 @@
 			"script": "start",
 			"path": "client/",
 			"problemMatcher": [],
-			"label": "Start React app",
+			"label": "Start client",
 			"detail": "react-scripts start"
 		},
 		{
@@ -32,7 +21,7 @@
 			"type": "shell",
 			"dependsOn": [
 				"Start Docker containers",
-				"Start React app"
+				"Start client"
 			],
 			"problemMatcher": [],
 			"detail": "Setup development environment"
