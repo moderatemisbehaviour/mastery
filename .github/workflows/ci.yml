@@ -20,22 +20,13 @@ jobs:
     steps:
       # Would be simpler to not use a builder and use actions to install and cache
       - uses: actions/checkout@v2
-      - name: Cache API
+      - name: Cache node modules
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-api-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-api-
             ${{ runner.os }}-install-
-            ${{ runner.os }}-
-      - name: Cache React app
-        uses: actions/cache@v1
-        with:
-          path: ${{ github.workspace }}/client/build/
-          key: ${{ runner.os }}-react-app
-          restore-keys: |
-            ${{ runner.os }}-install-react-app
             ${{ runner.os }}-
 
       - name: Build Builder
@@ -126,19 +117,12 @@ jobs:
   #       env:
   #         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy:
+  deploy-api:
     needs: install
     runs-on: ubuntu-latest
     steps:
-      - run: pwd
-      - run: echo $HOME
       - name: Checkout
         uses: actions/checkout@v2
-      - run: pwd
-      - run: echo $HOME
-
-      - name: Decrypt service account key
-        run: ${{ github.workspace }}/ci/decrypt-secret.sh ${{ github.workspace }}/ci/app-engine-deployer-key.json.gpg app-engine-deployer-key.json ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PASSPHRASE }}
 
       # Setup and configure gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -150,3 +134,21 @@ jobs:
       # Deploy App to App Engine
       - name: Deploy
         run: gcloud app deploy
+
+  deploy-client:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Setup and configure gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ secrets.APP_ENGINE_DEPLOYER_KEY }}
+          export_default_credentials: true
+
+      # Deploy client to App Engine
+      - name: Deploy
+        run: gsutil -m rsync -r ./client/build gs://moderatemisbehaviour-mastery-client
