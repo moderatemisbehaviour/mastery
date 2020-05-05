@@ -18,17 +18,21 @@ jobs:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     steps:
-      # Would be simpler to not use a builder and use actions to install and cache
       - uses: actions/checkout@v2
       - name: Cache node modules
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules
+          key: ${{ runner.os }}-install-node-modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-
-            ${{ runner.os }}-
+            ${{ runner.os }}-install-node-modules-
+      - name: Cache React app
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/client/build/
+          key: ${{ runner.os }}-install-react-app
 
+      # TODO: Would be simpler to not use a builder and use actions to install and cache
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Install API dependencies
@@ -131,7 +135,7 @@ jobs:
           service_account_key: ${{ secrets.APP_ENGINE_DEPLOYER_KEY }}
           export_default_credentials: true
 
-      # Deploy App to App Engine
+      # Deploy app to app engine
       - name: Deploy
         run: gcloud app deploy
 
@@ -139,8 +143,14 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      # TODO: Persisting deployment artifacts would save us having to awkwardly restore cache and install NPM modules again just in case.
+      # TODO: Or should just do these all in one job?? The test matrix makes that awkward to do.
+      - uses: actions/checkout@v2
+      - name: Cache React app
+        uses: actions/cache@v1
+        with:
+          path: ${{ github.workspace }}/client/build/
+          key: ${{ runner.os }}-install-react-app
 
       # Setup and configure gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -149,6 +159,6 @@ jobs:
           service_account_key: ${{ secrets.APP_ENGINE_DEPLOYER_KEY }}
           export_default_credentials: true
 
-      # Deploy client to App Engine
+      # Deploy client to bucket
       - name: Deploy
-        run: gsutil -m rsync -r ./client/build gs://moderatemisbehaviour-mastery-client
+        run: gsutil -m rsync -r ./client/build gs://${{ secrets.PROJECT_ID }}-client
