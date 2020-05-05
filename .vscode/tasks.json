@@ -13,7 +13,7 @@
 			"script": "start",
 			"path": "client/",
 			"problemMatcher": [],
-			"label": "Start React app",
+			"label": "Start client",
 			"detail": "react-scripts start"
 		},
 		{
@@ -21,7 +21,7 @@
 			"type": "shell",
 			"dependsOn": [
 				"Start Docker containers",
-				"Start React app"
+				"Start client"
 			],
 			"problemMatcher": [],
 			"detail": "Setup development environment"
