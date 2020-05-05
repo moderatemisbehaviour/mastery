@@ -138,6 +138,7 @@ jobs:
         with:
           project_id: ${{ secrets.PROJECT_ID }}
           service_account_key: ${{ secrets.APP_ENGINE_DEPLOYER_KEY }}
+          export_default_credentials: true
 
       # Deploy App to App Engine
       - name: Deploy
