@@ -24,12 +24,19 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: node-modules-api-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-api-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-install-node-modules-api-
+            ${{ runner.os }}-install-
+            ${{ runner.os }}-
       - name: Cache React app
         uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/client/build/
-          key: react-app-${{ runner.os }}
+          key: ${{ runner.os }}-react-app
+          restore-keys: |
+            ${{ runner.os }}-install-react-app
+            ${{ runner.os }}-
 
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
