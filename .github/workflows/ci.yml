@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-cache-bust-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-2-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-cache-bust-
+            ${{ runner.os }}-install-node-modules-2-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -74,14 +74,22 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-cache-bust-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-2-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-cache-bust-
+            ${{ runner.os }}-install-node-modules-2-
       - name: Restore client
         uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/client/build/
           key: ${{ runner.os }}-install-react-app
+
+      # TODO: Would be simpler to not use a builder container and just use actions to install and cache.
+      - name: Build Builder
+        run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
+      - name: Install API dependencies
+        run: docker run -v ${{ github.workspace }}:/mastery builder npm ci --unsafe-perm --prefix mastery
+        env:
+          CYPRESS_INSTALL_BINARY: 0
 
       - uses: cypress-io/github-action@v1
         with:
