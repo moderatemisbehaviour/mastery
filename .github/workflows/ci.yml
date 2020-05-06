@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-2-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-3-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-2-
+            ${{ runner.os }}-install-node-modules-3-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -74,9 +74,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-2-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-3-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-2-
+            ${{ runner.os }}-install-node-modules-3-
       - name: Restore client
         uses: actions/cache@v1
         with:
@@ -87,7 +87,7 @@ jobs:
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Install API dependencies
-        run: docker run -v ${{ github.workspace }}:/mastery builder npm ci --unsafe-perm --prefix mastery
+        run: npm install
         env:
           CYPRESS_INSTALL_BINARY: 0
 
