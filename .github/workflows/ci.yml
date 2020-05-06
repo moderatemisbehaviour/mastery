@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-3-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-4-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-3-
+            ${{ runner.os }}-install-node-modules-4-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -43,9 +43,7 @@ jobs:
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Install API dependencies
-        run: npm install
-        env:
-          CYPRESS_INSTALL_BINARY: 0
+        run: docker run -v ${{ github.workspace }}:/mastery -e CYPRESS_INSTALL_BINARY=0 builder npm install --unsafe-perm --prefix mastery
       - name: Install app dependencies
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm ci --prefix mastery/client
       - name: Build client
@@ -74,9 +72,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-3-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-4-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-3-
+            ${{ runner.os }}-install-node-modules-4-
       - name: Restore client
         uses: actions/cache@v1
         with:
@@ -87,9 +85,7 @@ jobs:
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Install API dependencies
-        run: npm install
-        env:
-          CYPRESS_INSTALL_BINARY: 0
+        run: docker run -v ${{ github.workspace }}:/mastery -e CYPRESS_INSTALL_BINARY=0 builder npm install --unsafe-perm --prefix mastery
 
       - uses: cypress-io/github-action@v1
         with:
