@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-4-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-5-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-4-
+            ${{ runner.os }}-install-node-modules-5-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -72,9 +72,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-4-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-install-node-modules-5-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-4-
+            ${{ runner.os }}-install-node-modules-5-
       - name: Restore client
         uses: actions/cache@v1
         with:
