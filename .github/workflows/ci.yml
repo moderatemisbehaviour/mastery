@@ -43,7 +43,7 @@ jobs:
       - name: Build Builder
         run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
       - name: Install API dependencies
-        run: docker run -v ${{ github.workspace }}:/mastery builder npm ci --unsafe-perm --prefix mastery
+        run: npm install
         env:
           CYPRESS_INSTALL_BINARY: 0
       - name: Install app dependencies
