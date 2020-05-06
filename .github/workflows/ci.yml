@@ -81,7 +81,7 @@ jobs:
           path: ${{ github.workspace }}/client/build/
           key: ${{ runner.os }}-install-react-app
 
-        uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v1
         with:
           build: ${{ github.workspace }}/ci/sorry-cypress/update-cypress-dashboard-api-url.sh
           headless: true
