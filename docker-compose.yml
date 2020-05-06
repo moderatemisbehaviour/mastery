@@ -4,7 +4,8 @@ services:
     image: postgres
     restart: always
     volumes:
-      - db_data:/var/lib/postgresql/data
+      # - db_data:/var/lib/postgresql/data
+      - ./database/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql:ro
     environment:
       POSTGRES_PASSWORD: foo
   graphql-engine:
