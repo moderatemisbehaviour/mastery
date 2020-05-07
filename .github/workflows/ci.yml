@@ -49,9 +49,9 @@ jobs:
             -v ~/.npm:/root/.npm \
             -e CYPRESS_INSTALL_BINARY=0 \
             builder \
-            npm install --unsafe-perm --prefix mastery
+            npm ci --unsafe-perm --prefix mastery
       - name: Install app dependencies
-        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --prefix mastery/client
+        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm ci --prefix mastery/client
       - name: Build client
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm run build --prefix mastery/client
 
