@@ -51,7 +51,7 @@ jobs:
             builder \
             npm install --unsafe-perm --prefix mastery
       - name: Install app dependencies
-        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm ci --prefix mastery/client
+        run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm install --prefix mastery/client
       - name: Build client
         run: docker run -v ${{ github.workspace }}/client:/mastery/client builder npm run build --prefix mastery/client
 
@@ -86,12 +86,6 @@ jobs:
         with:
           path: ${{ github.workspace }}/client/build/
           key: ${{ runner.os }}-install-react-app
-
-      # TODO: Would be simpler to not use a builder container and just use actions to install and cache.
-      - name: Build Builder
-        run: docker build -f ${{ github.workspace }}/ci/builder/Dockerfile --tag builder ${{ github.workspace }}/ci/builder
-      - name: Install API dependencies
-        run: docker run -v ${{ github.workspace }}:/mastery -v ~/.npm:/root/.npm -e CYPRESS_INSTALL_BINARY=0 builder npm install --unsafe-perm --prefix mastery
 
       - uses: cypress-io/github-action@v1
         with:
