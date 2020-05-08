@@ -68,7 +68,7 @@ jobs:
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            pwd
+            yarn --cwd mastery/client build
 
   test:
     needs: install
