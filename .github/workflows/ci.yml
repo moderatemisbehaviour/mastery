@@ -47,6 +47,7 @@ jobs:
           registry: docker.pkg.github.com
           image_name: builder
           context: ${{ github.workspace }}/ci/builder/
+      - run: docker images
       - name: Install API dependencies
         run: |
           docker run \
