@@ -46,6 +46,8 @@ jobs:
           password: "${{ secrets.GITHUB_TOKEN }}"
           registry: docker.pkg.github.com
           image_name: builder
+          dockerfile: ./ci/builder/Dockerfile
+          context: ./ci/builder/
       - name: Install API dependencies
         run: |
           docker run \
