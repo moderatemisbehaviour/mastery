@@ -40,12 +40,12 @@ jobs:
           key: ${{ runner.os }}-install-react-app
 
       # TODO: Would be simpler to not use a builder container and just use actions to install and cache.
-      - name: Build Builder
-        run: |
-          docker build \
-            -f ${{ github.workspace }}/ci/builder/Dockerfile \
-            --tag builder \
-            ${{ github.workspace }}/ci/builder
+      - uses: whoan/docker-build-with-cache-action@v5
+        with:
+          username: moderatemisbehaviour
+          password: "${{ secrets.GITHUB_TOKEN }}"
+          registry: docker.pkg.github.com
+          image_name: builder
       - name: Install API dependencies
         run: |
           docker run \
