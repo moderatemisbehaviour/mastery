@@ -2,7 +2,7 @@
 *Master yourself*
 
 # Overview
-*Mastery is currently in development.*
+*Mastery is currently in development. The first release is intended to be a React Native app targeting Android.*
 
 Mastery is an app that can help you to improve at anything whether it be learning a new language, losing weight, or just being a better listener 🙂👂
 
