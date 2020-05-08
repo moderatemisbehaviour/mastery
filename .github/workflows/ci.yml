@@ -33,9 +33,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
-          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-global-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-cache-
+            ${{ runner.os }}-yarn-global-cache-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -55,17 +55,17 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}:/mastery \
-            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-cache \
+            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-global-cache \
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --frozen-lockfile --unsafe-perm --cwd mastery --cache-folder /tmp/yarn-cache
+            yarn --frozen-lockfile --unsafe-perm --cwd mastery --cache-folder /tmp/yarn-global-cache
       - name: Install app dependencies
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-cache \
+            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-global-cache \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --frozen-lockfile --cwd mastery/client --cache-folder /tmp/yarn-cache
+            yarn --frozen-lockfile --cwd mastery/client --cache-folder /tmp/yarn-global-cache
       - name: Build client
         run: |
           docker run \
@@ -99,9 +99,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
-          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-global-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-cache-
+            ${{ runner.os }}-yarn-global-cache-
       - name: Restore client
         uses: actions/cache@v1
         with:
@@ -165,4 +165,4 @@ jobs:
           export_default_credentials: true
 
       - name: Deploy client to bucket
-        run: gsutil -m rsync -r ./client/build gs://${{ secrets.PROJECT_ID }}-client 
+        run: gsutil -m rsync -r ./client/build gs://${{ secrets.PROJECT_ID }}-client
