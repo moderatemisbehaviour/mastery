@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: $(yarn cache dir) # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-6-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-6-
+            ${{ runner.os }}-yarn-cache-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -93,9 +93,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: $(yarn cache dir) # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-6-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-6-
+            ${{ runner.os }}-yarn-cache-
       - name: Restore client
         uses: actions/cache@v1
         with:
