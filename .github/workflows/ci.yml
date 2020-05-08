@@ -54,19 +54,19 @@ jobs:
             -v ${{ github.workspace }}:/mastery \
             -v ~/.npm:/root/.npm \
             -e CYPRESS_INSTALL_BINARY=0 \
-            builder \
+            docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             npm ci --unsafe-perm --prefix mastery
       - name: Install app dependencies
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            builder \
+            docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             npm ci --prefix mastery/client
       - name: Build client
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            builder \
+            docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             npm run build --prefix mastery/client
 
   test:
