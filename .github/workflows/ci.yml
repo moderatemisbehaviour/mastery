@@ -30,7 +30,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: $(yarn cache dir) # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
-          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-cache-
       - name: Cache client
@@ -93,7 +93,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: $(yarn cache dir) # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
-          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-cache-
       - name: Restore client
