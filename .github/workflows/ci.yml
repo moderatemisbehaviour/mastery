@@ -60,6 +60,7 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
+            -v ~/.npm:/root/.npm \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             npm ci --prefix mastery/client
       - name: Build client
@@ -158,4 +159,4 @@ jobs:
           export_default_credentials: true
 
       - name: Deploy client to bucket
-        run: gsutil -m rsync -r ./client/build gs://${{ secrets.PROJECT_ID }}-client
+        run: gsutil -m rsync -r ./client/build gs://${{ secrets.PROJECT_ID }}-client 
