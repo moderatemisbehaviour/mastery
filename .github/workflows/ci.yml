@@ -32,7 +32,7 @@ jobs:
       - name: Cache API and client node modules
         uses: actions/cache@v1
         with:
-          path: ${{ YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
+          path: ${{ env.YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
           key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-cache-
@@ -55,7 +55,7 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}:/mastery \
-            -v ${{ YARN_CACHE_DIR }}:/tmp/yarn-cache \
+            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-cache \
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             yarn --frozen-lockfile --unsafe-perm --cwd mastery --cache-folder /tmp/yarn-cache
@@ -63,7 +63,7 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            -v ${{ YARN_CACHE_DIR }}:/tmp/yarn-cache \
+            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-cache \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             yarn --frozen-lockfile --cwd mastery/client --cache-folder /tmp/yarn-cache
       - name: Build client
@@ -98,7 +98,7 @@ jobs:
       - name: Restore API
         uses: actions/cache@v1
         with:
-          path: ${{ YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
+          path: ${{ env.YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
           key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-cache-
