@@ -52,23 +52,23 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}:/mastery \
-            -v $(yarn cache dir):/root/.npm \
+            -v $(yarn cache dir):$(yarn cache dir) \
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --frozen-lockfile --unsafe-perm --prefix mastery
+            yarn --frozen-lockfile --unsafe-perm --cwd mastery
       - name: Install app dependencies
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            -v $(yarn cache dir):/root/.npm \
+            -v $(yarn cache dir):$(yarn cache dir) \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --frozen-lockfile --prefix mastery/client
+            yarn --frozen-lockfile --cwd mastery/client
       - name: Build client
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            npm run build --prefix mastery/client
+            yarn build --cwd mastery/client
 
   test:
     needs: install
