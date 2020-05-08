@@ -2,6 +2,8 @@
 *Master yourself*
 
 # Overview
+*Mastery is currently in development.*
+
 Mastery is an app that can help you to improve at anything whether it be learning a new language, losing weight, or just being a better listener 🙂👂
 
 As humans we spend a lot of time thinking about our future ambitions, our past mistakes, and our present desires, so we are certainly not short of inspiration on how we might want to improve. To improve at something we must change our habits but when we try to do this we notice that its *really hard*! That's because changing our habits means changing *ourselves*. All improvement therefore begins with *self*-improvement.
