@@ -26,9 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Get yarn cache directory path
-        run: echo "::set-env name=YARN_CACHE_DIR::$(yarn cache dir)"
-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -48,17 +45,15 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}:/mastery \
-            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-global-cache \
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --frozen-lockfile --unsafe-perm --cwd mastery --cache-folder /tmp/yarn-global-cache
+            yarn --frozen-lockfile --unsafe-perm --cwd mastery
       - name: Install app dependencies
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-global-cache \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --frozen-lockfile --cwd mastery/client --cache-folder /tmp/yarn-global-cache
+            yarn --frozen-lockfile --cwd mastery/client
       - name: Build client
         run: |
           docker run \
@@ -84,9 +79,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Get yarn cache directory path
-        run: echo "::set-env name=YARN_CACHE_DIR::$(yarn cache dir)"
 
       - name: Restore client
         uses: actions/cache@v1
