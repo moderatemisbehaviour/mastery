@@ -48,7 +48,7 @@ jobs:
             -w /mastery \
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn  immutable
+            yarn --immutable
       - name: Install app dependencies
         run: |
           docker run \
