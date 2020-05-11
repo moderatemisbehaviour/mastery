@@ -23,6 +23,12 @@
   },
   "homepage": "https://github.com/moderatemisbehaviour/mastery#readme",
   "devDependencies": {
-    "cypress": "^4.5.0"
+    "cypress": "^4.5.0",
+    "eslint": "^7.0.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "next": "^9.3.6",
+    "pg": "^8.1.0"
   }
 }
