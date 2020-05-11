@@ -60,7 +60,7 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            -w /mastery/client \ 
+            -w /mastery/client \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             yarn build
 
