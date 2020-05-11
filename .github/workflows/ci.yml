@@ -29,13 +29,6 @@ jobs:
       - name: Get yarn cache directory path
         run: echo "::set-env name=YARN_CACHE_DIR::$(yarn cache dir)"
 
-      - name: Cache API and client node modules
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
-          key: ${{ runner.os }}-yarn-global-cache-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-global-cache-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -95,13 +88,6 @@ jobs:
       - name: Get yarn cache directory path
         run: echo "::set-env name=YARN_CACHE_DIR::$(yarn cache dir)"
 
-      - name: Restore API
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
-          key: ${{ runner.os }}-yarn-global-cache-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-global-cache-
       - name: Restore client
         uses: actions/cache@v1
         with:
