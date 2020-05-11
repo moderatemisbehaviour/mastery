@@ -45,21 +45,24 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}:/mastery \
+            -w /mastery
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --immutable --unsafe-perm --cwd mastery
+            yarn --immutable
       - name: Install app dependencies
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
+            -w /mastery/client
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --immutable --cwd mastery/client
+            yarn --immutable
       - name: Build client
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
+            -w /mastery/client
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --cwd mastery/client build
+            yarn build
 
   test:
     needs: install
