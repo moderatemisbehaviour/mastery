@@ -45,7 +45,7 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}:/mastery \
-            -w /mastery
+            -w /mastery \
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             yarn --immutable
@@ -53,14 +53,14 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            -w /mastery/client
+            -w /mastery/client \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             yarn --immutable
       - name: Build client
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            -w /mastery/client
+            -w /mastery/client \ 
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
             yarn build
 
