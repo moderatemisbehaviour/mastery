@@ -48,7 +48,7 @@ jobs:
             -w /mastery \
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            yarn --immutable
+            yarn  immutable
       - name: Install app dependencies
         run: |
           docker run \
@@ -89,8 +89,11 @@ jobs:
           path: ${{ github.workspace }}/client/build/
           key: ${{ runner.os }}-install-react-app
 
+      - run: yarn --immutable
+
       - uses: cypress-io/github-action@v1
         with:
+          install: false # Uses `yarn --frozen-lockfile` which is deprecated in yarn 2
           build: ${{ github.workspace }}/ci/sorry-cypress/update-cypress-dashboard-api-url.sh
           headless: true
           record: true
