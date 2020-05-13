@@ -26,13 +26,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get yarn cache directory path
+        run: echo "::set-env name=YARN_CACHE_DIR::$(yarn cache dir)"
+
       - name: Cache API and client node modules
         uses: actions/cache@v1
         with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-6-${{ hashFiles('**/package-lock.json') }}
+          path: ${{ env.YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
+          key: ${{ runner.os }}-yarn-global-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-6-
+            ${{ runner.os }}-yarn-global-cache-
       - name: Cache client
         uses: actions/cache@v1
         with:
@@ -52,23 +55,23 @@ jobs:
         run: |
           docker run \
             -v ${{ github.workspace }}:/mastery \
-            -v ~/.npm:/root/.npm \
+            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-global-cache \
             -e CYPRESS_INSTALL_BINARY=0 \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            npm ci --unsafe-perm --prefix mastery
+            yarn --frozen-lockfile --unsafe-perm --cwd mastery --cache-folder /tmp/yarn-global-cache
       - name: Install app dependencies
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
-            -v ~/.npm:/root/.npm \
+            -v ${{ env.YARN_CACHE_DIR }}:/tmp/yarn-global-cache \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            npm ci --prefix mastery/client
+            yarn --frozen-lockfile --cwd mastery/client --cache-folder /tmp/yarn-global-cache
       - name: Build client
         run: |
           docker run \
             -v ${{ github.workspace }}/client:/mastery/client \
             docker.pkg.github.com/moderatemisbehaviour/mastery/builder \
-            npm run build --prefix mastery/client
+            yarn --cwd mastery/client build
 
   test:
     needs: install
@@ -89,18 +92,25 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get yarn cache directory path
+        run: echo "::set-env name=YARN_CACHE_DIR::$(yarn cache dir)"
+
       - name: Restore API
         uses: actions/cache@v1
         with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-install-node-modules-6-${{ hashFiles('**/package-lock.json') }}
+          path: ${{ env.YARN_CACHE_DIR }} # npm cache files are stored in `$(yarn cache dir)` on Linux/macOS
+          key: ${{ runner.os }}-yarn-global-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-install-node-modules-6-
+            ${{ runner.os }}-yarn-global-cache-
       - name: Restore client
         uses: actions/cache@v1
         with:
           path: ${{ github.workspace }}/client/build/
           key: ${{ runner.os }}-install-react-app
+
+      # Could start the application with the 'start' property of the Cypress action but this gives us a head start.
+      - name: Start application
+        run: docker-compose up -d &
 
       - uses: cypress-io/github-action@v1
         with:
@@ -108,7 +118,6 @@ jobs:
           headless: true
           record: true
           parallel: true
-          start: docker-compose up -d
           wait-on: 'http://localhost:3001'
           stop: docker-compose stop
         env:
@@ -159,4 +168,4 @@ jobs:
           export_default_credentials: true
 
       - name: Deploy client to bucket
-        run: gsutil -m rsync -r ./client/build gs://${{ secrets.PROJECT_ID }}-client 
+        run: gsutil -m rsync -r ./client/build gs://${{ secrets.PROJECT_ID }}-client
