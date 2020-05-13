@@ -110,7 +110,7 @@ jobs:
 
       # Could start the application with the 'start' property of the Cypress action but this gives us a head start.
       - name: Start application
-        run: docker-compose up -d
+        run: docker-compose up -d &
 
       - uses: cypress-io/github-action@v1
         with:
