@@ -125,6 +125,7 @@ jobs:
           CYPRESS_RECORD_KEY: xxxx
 
   deploy-api:
+    needs: install # Could change this to 'install' so that it runs in parallel to test but don't want to deploy if tests fail.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -141,6 +142,7 @@ jobs:
         run: gcloud app deploy
 
   deploy-client:
+    needs: install
     runs-on: ubuntu-latest
     steps:
       # TODO: See if there's a way to avoid using cache here.
