@@ -34,3 +34,7 @@ Just because we spend a lot of time thinking about possible self-improvements do
 The best people to tell us how we should improve are the people who are most dependent on us. Our family, friends, and colleagues.
 
 We recommend you use 360 feedback tools and techniques to identify the right areas for self-improvement so you can invest your efforts wisely 🧙‍♂️
+
+# Inspiration
+- Franklin Covey time management system
+- 7 Habits of Highly Effective People
