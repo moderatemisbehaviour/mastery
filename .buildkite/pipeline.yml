@@ -1,3 +1,11 @@
 steps:
-  - command: "echo \"hello\""
-    label: ":llama: Tests"
+  - command: yarn
+    label: "Install dependencies"
+  - name: "Start application %n"
+    plugins:
+      - docker-compose#v3.0.3:
+  - command: yarn test
+  - name: "Start application %n"
+    plugins:
+      - docker-compose#v3.0.3:
+        stop:

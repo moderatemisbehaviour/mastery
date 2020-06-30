@@ -91,6 +91,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        name: ":arrow_heading_down: clone"
 
       - name: Get yarn cache directory path
         run: echo "::set-env name=YARN_CACHE_DIR::$(yarn cache dir)"
